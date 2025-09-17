@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Translator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            transition: all 0.3s ease;
+        }
+        .container {
+            max-width: 900px;
+            padding: 2rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+        textarea {
+            resize: none;
+            transition: all 0.2s ease-in-out;
+            border-color: #d1d5db;
+        }
+        textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+            outline: none;
+        }
+        button {
+            transition: all 0.2s ease-in-out;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        select, input[type="text"] {
+            transition: all 0.2s ease-in-out;
+            border-color: #d1d5db;
+        }
+        select:focus, input[type="text"]:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+            outline: none;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="container mx-auto">
+        <div class="card">
+            <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Universal Translator</h1>
+            <p class="text-center text-gray-600 mb-8">Translate text between different languages instantly.</p>
+
+            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                <!-- Input Text Area -->
+                <div class="w-full">
+                    <label for="inputText" class="block text-gray-700 font-semibold mb-2">Input Text</label>
+                    <textarea id="inputText" rows="6" class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <!-- Translated Text Area -->
+                <div class="w-full">
+                    <label for="translatedText" class="block text-gray-700 font-semibold mb-2">Translated Text</label>
+                    <textarea id="translatedText" rows="6" readonly class="w-full p-4 bg-gray-50 border border-gray-300 rounded-xl cursor-not-allowed"></textarea>
+                </div>
+            </div>
+
+            <!-- Language Selector and Button -->
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="w-full md:w-1/2">
+                    <label for="languageSelect" class="block text-gray-700 font-semibold mb-2">Select Language</label>
+                    <select id="languageSelect" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="en">English</option>
+                        <option value="kn">Kannada</option>
+                        <option value="te">Telugu</option>
+                        <option value="ta">Tamil</option>
+                        <option value="ml">Malyalam</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="it">Italian</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="zh">Chinese (Simplified)</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                        <option value="ru">Russian</option>
+                        <option value="ar">Arabic</option>
+                        <option value="hi">Hindi</option>
+                        <option value="bn">Bengali</option>
+                        <option value="nl">Dutch</option>
+                        <option value="sv">Swedish</option>
+                        <option value="tr">Turkish</option>
+                        <option value="pl">Polish</option>
+                        <option value="el">Greek</option>
+                        <option value="he">Hebrew</option>
+                        <option value="th">Thai</option>
+                        <option value="vi">Vietnamese</option>
+                        <option value="id">Indonesian</option>
+                        <option value="ms">Malay</option>
+                        <option value="ro">Romanian</option>
+                        <option value="uk">Ukrainian</option>
+                        <option value="cs">Czech</option>
+                        <option value="hu">Hungarian</option>
+                        <option value="fi">Finnish</option>
+                        <option value="no">Norwegian</option>
+                        <option value="da">Danish</option>
+                        <option value="fa">Persian</option>
+                        <option value="tl">Tagalog</option>
+                        <option value="sw">Swahili</option>
+                        <option value="ur">Urdu</option>
+                        <option value="pa">Punjabi</option>
+                        <option value="gu">Gujarati</option>
+                       </select>
+                </div>
+                <div class="w-full md:w-1/2 mt-4 md:mt-0 flex items-center justify-center">
+                    <button id="translateButton" class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center">
+                        <span id="buttonText">Translate</span>
+                        <div id="loader" class="loader hidden ml-3"></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="messageBox" class="mt-6 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline" id="messageText">An unexpected error occurred. Please try again.</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputText = document.getElementById('inputText');
+            const translatedText = document.getElementById('translatedText');
+            const languageSelect = document.getElementById('languageSelect');
+            const translateButton = document.getElementById('translateButton');
+            const buttonText = document.getElementById('buttonText');
+            const loader = document.getElementById('loader');
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+
+            // Show a message box with an error
+            const showMessage = (message, type = 'error') => {
+                messageText.textContent = message;
+                messageBox.classList.remove('hidden');
+                if (type === 'error') {
+                    messageBox.classList.remove('bg-green-100', 'border-green-400', 'text-green-700');
+                    messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+                } else {
+                    messageBox.classList.remove('bg-red-100', 'border-red-400', 'text-red-700');
+                    messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+                }
+            };
+            
+            const hideMessage = () => {
+                messageBox.classList.add('hidden');
+            };
+
+            const toggleLoading = (isLoading) => {
+                if (isLoading) {
+                    buttonText.textContent = 'Translating...';
+                    loader.classList.remove('hidden');
+                    translateButton.disabled = true;
+                    hideMessage();
+                } else {
+                    buttonText.textContent = 'Translate';
+                    loader.classList.add('hidden');
+                    translateButton.disabled = false;
+                }
+            };
+
+            const translate = async () => {
+                const text = inputText.value.trim();
+                const targetLang = languageSelect.value;
+
+                if (text === '') {
+                    showMessage('Please enter text to translate.');
+                    return;
+                }
+                
+                toggleLoading(true);
+
+                try {
+                    const encodedText = encodeURIComponent(text);
+                    const url = https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodedText};
+                    
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(HTTP error! status: ${response.status});
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data && data[0] && data[0][0] && data[0][0][0]) {
+                        translatedText.value = data[0][0][0];
+                    } else {
+                        translatedText.value = 'Translation failed. Please try again.';
+                        showMessage('Could not parse the translation response.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                    translatedText.value = 'An error occurred during translation.';
+                    showMessage('An error occurred during translation. Please check your internet connection and try again.', 'error');
+                } finally {
+                    toggleLoading(false);
+                }
+            };
+
+            translateButton.addEventListener('click', translate);
+        });
+    </script>
+</body>
+</html>
